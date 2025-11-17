@@ -1,0 +1,2 @@
+Manzana x1;Leche x2 | Total: 3 €
+Leche x2 | Total: 1.8 €
