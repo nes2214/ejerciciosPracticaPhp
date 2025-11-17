@@ -1,9 +1,7 @@
 <?php
-session_start();
-
 if (isset($_POST['usuario']) && isset($_POST['correo']) && isset($_POST['pwd'])) {
 
-    function validar($data){
+    function validar($data) {
         $data = trim($data);
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
@@ -14,6 +12,7 @@ if (isset($_POST['usuario']) && isset($_POST['correo']) && isset($_POST['pwd']))
     $correo = validar($_POST['correo']);
     $pwd = validar($_POST['pwd']);
 
+    // Validaciones básicas
     if (empty($usuario)) {
         header("Location: register.php?error=El usuario es requerido");
         exit();
@@ -27,30 +26,43 @@ if (isset($_POST['usuario']) && isset($_POST['correo']) && isset($_POST['pwd']))
         exit();
     }
 
-    // Encriptar contraseña
-    $clave = md5($pwd);
+    // ⭐ Validación de contraseña fuerte
+if (strlen($pwd) < 8 ||
+    !preg_match('/[A-Z]/', $pwd) ||       // Mayúscula
+    !preg_match('/[a-z]/', $pwd) ||       // Minúscula
+    !preg_match('/[0-9]/', $pwd) ||       
+    !preg_match('/[^a-zA-Z0-9]/', $pwd)) 
+{
+    header("Location: register.php?error=La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.");
+    exit();
+}
 
-    // Ruta del archivo donde se guardan los registros
+    // Guardar contraseña en md5 (NO recomendado en producción)
+    $pwd_hash = md5($pwd);
+
     $archivo = "files/users.txt";
 
-    // Verificar que el usuario no exista
+    // Comprobar si existe el archivo y si el usuario/correo ya están registrados
     if (file_exists($archivo)) {
         $usuarios = file($archivo);
+
         foreach ($usuarios as $linea) {
             list($u, $c, $p) = explode(";", trim($linea));
-            if ($u == $usuario) {
+
+            if ($u === $usuario) {
                 header("Location: register.php?error=El usuario ya existe");
                 exit();
             }
-            if ($c == $correo) {
+
+            if ($c === $correo) {
                 header("Location: register.php?error=El correo ya está registrado");
                 exit();
             }
         }
     }
 
-    // Guardar usuario
-    $registro = $usuario . ";" . $correo . ";" . $clave . "\n";
+    // Registrar usuario
+    $registro = $usuario . ";" . $correo . ";" . $pwd_hash . "\n";
     file_put_contents($archivo, $registro, FILE_APPEND);
 
     header("Location: index.php?success=Usuario registrado con éxito");

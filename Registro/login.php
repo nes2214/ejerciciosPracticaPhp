@@ -23,6 +23,7 @@ if (isset($_GET['error'])) {
 
     <button type="submit">Entrar</button>
 </form>
+<p>No tienes cuenta? <a href="register.php">Registrarse</a></p>
 
 </body>
 </html>

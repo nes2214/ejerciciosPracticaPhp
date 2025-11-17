@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,7 +18,11 @@
 
     <label>Contraseña:</label><br>
     <input type="password" name="pwd"><br><br>
-
+    <?php 
+    if (isset($_GET['error'])) {
+        echo "<p style='color:red'>".$_GET['error']."</p>";
+    }
+    ?>
     <button type="submit">Registrarse</button>
 </form>
 
