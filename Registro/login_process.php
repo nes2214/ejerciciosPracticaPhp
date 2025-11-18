@@ -18,29 +18,39 @@ if (isset($_POST['usuario']) && isset($_POST['pwd'])) {
         exit();
     }
 
-    $usuarios = file($archivo);
+    
+    $fh = fopen($archivo, "r");
 
     $userFound = false;
 
-    foreach ($usuarios as $linea) {
-        list($u, $c, $p) = explode(";", trim($linea));
+    while (($linea = fgets($fh)) !== false) {
+
+        $linea = trim($linea);
+        if ($linea === "") continue; // evita líneas vacías
+
+        list($u, $c, $p, $r) = explode(";", trim($linea));
+
 
         if ($usuario === $u) {
             $userFound = true;
 
             if ($pwd === $p) {
-                
+
                 $_SESSION['usuario'] = $u;
                 $_SESSION['correo'] = $c;
-
+                $_SESSION['rol'] = $r;
+                fclose($fh);
                 header("Location: home.php");
                 exit();
             } else {
+                fclose($fh);
                 header("Location: login.php?error=Contraseña incorrecta");
                 exit();
             }
         }
     }
+
+    fclose($fh);
 
     if (!$userFound) {
         header("Location: login.php?error=El usuario no existe");

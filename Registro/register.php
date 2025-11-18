@@ -18,6 +18,11 @@
 
     <label>Contraseña:</label><br>
     <input type="password" name="pwd"><br><br>
+    <select name="rol">
+        <option value="user">Usuario</option>
+        <option value="admin">Administrador</option>
+    </select>
+
     <?php 
     if (isset($_GET['error'])) {
         echo "<p style='color:red'>".$_GET['error']."</p>";
